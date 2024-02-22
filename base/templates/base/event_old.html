@@ -1,0 +1,73 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+
+<style>
+	.event-container{
+		display: grid;
+		grid-template-columns: 3fr 1fr;
+	}
+</style>
+
+
+<div class="event-container">
+
+
+	<div>
+		<h1>{{event.title}}</h1>
+	
+		<p>{{event.description}}</p>
+	
+	
+		<div class="comment">
+			 <h3>Commentaires</h3>
+			 <hr>
+		
+		     {% for message in event_messages  %}
+			 <div>
+				
+				{% if request.user == message.user %}
+				<a href="{% url 'delete-message' message.id %}">Delete</a>
+				{% endif %}
+				
+			 </div>
+	
+			 <div>
+			    <small>@{{message.user}}  {{message.created|timesince}}</small>
+			    <p>{{message.body}}</p>
+		     </div>
+			
+		      {% endfor %}
+		</div>
+		
+		{% if request.user.is_authenticated %}
+		<div class="comment-form">
+	
+			<form method="POST" action="">
+				{% csrf_token %}
+				<input type="text" name="body" placeholder="Ecris ton message ici...">
+			</form>
+	
+		</div>
+	</div>
+ 
+	<div>
+		<h3>Participants</h3>
+		<hr>
+		{% for user in participants  %}
+			<div>
+				<p>@{{user.username}}</p>
+			</div>
+		{% endfor %}
+			
+	</div>
+	
+</div>
+
+
+{% endif %}
+		
+
+{% endblock content %}
+ 
