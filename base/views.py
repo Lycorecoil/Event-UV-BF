@@ -66,16 +66,16 @@ def registerPage(request):
 
 	if request.method == "POST":
 		form = CustomUserCreationForm(request.POST)
-		print(form)
 		print("-----------")
 		if form.is_valid():
+			print("hey")
 			user = form.save(commit=False)
 			user.username = user.username.lower()
    #envoyer mail welcom
 			subject = "Welcome to my exercice App"
 			mail = "WELCOME"
-			from_email = settings.Email_HOST_USER
-			to_person = user.email
+			from_email = settings.EMAIL_HOST_USER
+			to_person = [user.email]
 			send_mail(subject, mail, from_email, to_person,fail_silently=False)
 
 			user.save()
