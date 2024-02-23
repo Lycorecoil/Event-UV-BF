@@ -45,6 +45,7 @@
 		</svg>
 		{{event.participants.all.count}} Joined
 	  </a>
+	  <a class="button" href="{% url 'invite' event.id  %}">Inviter des participants</a>
 	  <p class="roomListRoom__topic">{{event.topic.name}}</p>
 	</div>
   </div>

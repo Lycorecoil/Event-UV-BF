@@ -34,3 +34,9 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class InviteForm(forms.Form):
+	name=forms.CharField(max_length=64)
+	mail = forms.EmailField()
+	message = forms.CharField(widget=forms.Textarea)
+

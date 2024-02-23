@@ -17,6 +17,10 @@ urlpatterns = [
 	path('delete-event/<str:pk>/',views.deleteEvent,name='delete-event'),
 	path('delete-message/<str:pk>/',views.deleteMessage,name='delete-message'),
     path('update-user/',views.updateUser,name='update-user'),
+    
+	 path('event/invite/<str:pk>/',views.inviteUser,name='invite'),
+    
+
 ] 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

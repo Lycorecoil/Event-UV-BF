@@ -7,7 +7,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import Event, Topic, Message
-from .forms import EvenForm, UserForm
+from .forms import EvenForm, UserForm, InviteForm, CustomUserCreationForm
+from django.core.mail import send_mail
+from studyevent import settings
 
 
 
@@ -59,13 +61,23 @@ def logoutUser(request):
 
 
 def registerPage(request):
-	form =  UserCreationForm()
+	form = CustomUserCreationForm()
+	print(form)
 
 	if request.method == "POST":
-		form = UserCreationForm(request.POST)
+		form = CustomUserCreationForm(request.POST)
+		print(form)
+		print("-----------")
 		if form.is_valid():
 			user = form.save(commit=False)
 			user.username = user.username.lower()
+   #envoyer mail welcom
+			subject = "Welcome to my exercice App"
+			mail = "WELCOME"
+			from_email = settings.Email_HOST_USER
+			to_person = user.email
+			send_mail(subject, mail, from_email, to_person,fail_silently=False)
+
 			user.save()
 			login(request,user)
 			return redirect('home')
@@ -223,3 +235,88 @@ def updateUser(request):
 			print("non valid")
 	
 	return render(request,"base/update-user.html",{'form':form})
+
+#@login_required(login_url='login')
+#def inviteUser(request,pk):
+#	event = Event.objects.get(id=pk)
+#	print(event)
+#	form =InviteForm()
+#	if request.method == "POST":
+#		name = request.method.get('name')
+#		form = InviteForm(request.POST)
+#		subject = name + "vous etes inviter a notre evenement" 
+#		message = form.cleaned_data['message']
+#		from_email = 'bobcompteatoutfaire@gmail.com'
+#		to_list = [form.cleaned_data['mail']]  
+
+#		send_mail(subject, message, from_email , to_list,fail_silently=False)
+		
+		
+
+#		if form.is_valid():
+#			send_mail()
+#			return redirect('home')
+	     
+		
+
+		
+#	context = {'form':form}
+#	return render(request,'base/invite.html',context)
+
+
+
+
+
+
+#@login_required(login_url='login')
+#def inviteUser(request, pk):
+#    event = Event.objects.get(id=pk)
+#    form = InviteForm()
+
+#    if request.method == "POST":
+ #       form = InviteForm(request.POST)
+#
+ #       if form.is_valid():
+ #           name = form.cleaned_data['name']
+ #           to_list = [form.cleaned_data['mail']]  # Utiliser une liste ici
+ #           message = form.cleaned_data['message']
+#            if name:
+#				subject = f"{name}, vous êtes invité à notre événement"
+#			else:
+#				subject = "Sujet par défaut ou message d'erreur"
+
+ #           from_email = settings.EMAIL_HOST_USER
+
+		
+ #           send_mail(subject, message, from_email, to_list, fail_silently=False)
+
+ #           return redirect('home')
+#
+ #   context = {'form': form}
+ #   return render(request, 'base/invite.html', context)
+
+@login_required(login_url='login')
+def inviteUser(request, pk):
+    event = Event.objects.get(id=pk)
+    form = InviteForm()
+
+    if request.method == "POST":
+        form = InviteForm(request.POST)
+
+        if form.is_valid():
+            name = request.POST.get('name')
+            to_list = [request.POST.get('mail')]  # Utiliser une liste ici
+            message =request.POST.get('message')
+            if name:
+                subject = f"{name}, vous êtes invité à notre événement"
+            else:
+                subject = "Sujet par défaut ou message d'erreur"
+
+            from_email = settings.EMAIL_HOST_USER
+
+            send_mail(subject, message, from_email, to_list)
+
+            return redirect('home')
+
+    context = {'form': form}
+    return render(request, 'base/invite.html', context)
